@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  spiritlm:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    container_name: spiritlm-container
+    ports:
+      - "7860:7860"
+    volumes:
+      # Mount your downloaded checkpoints directory
+      # Replace "C:/spiritlm/checkpoints" with your actual path
+      # Use forward slashes even on Windows
+      - "../Meta_Spirit-LM-ungated:/app/checkpoints"
+      # Optional: Mount a directory for audio uploads/outputs
+      - "./audio:/app/audio"
+      # Mount the demo script
+      - "./spiritlm_demo.py:/app/spiritlm_demo.py:ro"
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+      - CUDA_VISIBLE_DEVICES=0
+      - NVIDIA_DRIVER_CAPABILITIES=compute,utility
+      - SPIRITLM_CHECKPOINTS_DIR=/app/checkpoints
+      - LOG_LEVEL=DEBUG
+    restart: unless-stopped
+    shm_size: 2gb
+    stdin_open: true
+    tty: true
+    
+    # For Docker Desktop on Windows with WSL2
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
