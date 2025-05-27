@@ -7,3 +7,4 @@ fairscale>=0.4
 sentencepiece
 pyarrow>=14.0
 torchfcpe>=0.0.4
+gradio
