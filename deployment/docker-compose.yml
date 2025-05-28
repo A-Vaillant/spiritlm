@@ -23,7 +23,7 @@ services:
       - NVIDIA_DRIVER_CAPABILITIES=compute,utility
       - SPIRITLM_CHECKPOINTS_DIR=/app/checkpoints
       - LOG_LEVEL=DEBUG
-    restart: false
+    restart: "no"
     shm_size: 2gb
     stdin_open: true
     tty: true

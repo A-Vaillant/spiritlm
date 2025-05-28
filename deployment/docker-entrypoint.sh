@@ -26,9 +26,9 @@ else
     echo "/app/checkpoints/"
     echo "├── speech_tokenizer/"
     echo "└── spiritlm_model/"
+    echo "Actual structure:"
+    ls -la /app/checkpoints
 fi
-
-python -m venv .venv
 
 # Verify Python installation
 echo "Python version: $(python3 --version)"
