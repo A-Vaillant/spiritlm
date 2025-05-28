@@ -166,3 +166,5 @@ checkpoints/
 
 # local data folder
 data/
+pyproject.toml
+spiritlm_demo.py

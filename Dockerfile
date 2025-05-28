@@ -38,7 +38,7 @@ RUN python -m pip install --upgrade pip
 RUN python -m pip install torch==2.6.0+cu126 torchaudio==2.6.0+cu126 --index-url https://download.pytorch.org/whl/cu126
 
 # Clone Spirit LM repository
-RUN git clone -b dockerization https://github.com/A-Vaillant/spiritlm.git /app/spiritlm
+RUN git clone -b main https://github.com/A-Vaillant/spiritlm.git /app/spiritlm
 
 # Install Spirit LM package using Python 3.10
 WORKDIR /app/spiritlm
@@ -59,7 +59,7 @@ ENV TORCHAUDIO_USE_SOX=1
 ENV TORIO_USE_FFMPEG=1
 
 # Create entrypoint script
-COPY docker-entrypoint.sh /app/docker-entrypoint.sh
+COPY /deployment/docker-entrypoint.sh /app/docker-entrypoint.sh
 RUN chmod +x /app/docker-entrypoint.sh
 
 # Expose port for Gradio interface

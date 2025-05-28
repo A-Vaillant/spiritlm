@@ -1,7 +1,7 @@
 services:
   spiritlm:
     build: 
-      context: .
+      context: ../
       dockerfile: Dockerfile
     container_name: spiritlm-container
     ports:
@@ -23,7 +23,7 @@ services:
       - NVIDIA_DRIVER_CAPABILITIES=compute,utility
       - SPIRITLM_CHECKPOINTS_DIR=/app/checkpoints
       - LOG_LEVEL=DEBUG
-    restart: unless-stopped
+    restart: false
     shm_size: 2gb
     stdin_open: true
     tty: true
