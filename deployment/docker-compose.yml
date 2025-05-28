@@ -11,9 +11,9 @@ services:
       # Mount your downloaded checkpoints directory
       # Replace "C:/spiritlm/checkpoints" with your actual path
       # Use forward slashes even on Windows
-      - "../Meta_Spirit-LM-ungated:/app/checkpoints"
+      - "./../../Meta_Spirit-LM-ungated:/app/checkpoints"
       # Optional: Mount a directory for audio uploads/outputs
-      - "./audio:/app/audio"
+      - "./../audio:/app/audio"
       # Mount the demo script
       - "./spiritlm_demo.py:/app/spiritlm_demo.py:ro"
     environment:
