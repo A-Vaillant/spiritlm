@@ -30,10 +30,7 @@ RUN python --version && python -c "import sys; print(f'Python version: {sys.vers
 RUN python -m pip install --upgrade pip
 
 # Install PyTorch with CUDA 12.6 support using Python 3.10
-RUN python -m pip install torch==2.6.0+cu126 torchaudio==2.6.0+cu126 --index-url https://download.pytorch.org/whl/cu126
-
-# Create directory structure for checkpoints
-RUN mkdir -p /app/checkpoints
+RUN python -m pip install --root-user-action ignore torch==2.6.0+cu126 torchaudio==2.6.0+cu126 --index-url https://download.pytorch.org/whl/cu126
 
 # Clone Spirit LM repository
 RUN git clone -b main https://github.com/A-Vaillant/spiritlm.git /app/spiritlm

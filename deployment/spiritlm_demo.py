@@ -32,6 +32,55 @@ logger = logging.getLogger(__name__)
 spirit_lm = None
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
+
+def visualize_tokens(text, outputs):
+    """Create a visualization of text and speech tokens"""
+    if not outputs or len(outputs) == 0:
+        return "No tokens to visualize."
+    
+    try:
+        # Get the token sequence from the model output
+        # This assumes the output has token information - adjust based on actual Spirit LM API
+        token_info = []
+        
+        # Add input text tokens
+        token_info.append(f"📝 **Input Text**: {text}")
+        token_info.append("")
+        
+        # Add generated tokens visualization
+        output = outputs[0]
+        if hasattr(output, 'tokens') or hasattr(output, 'token_sequence'):
+            tokens = getattr(output, 'tokens', getattr(output, 'token_sequence', []))
+            
+            token_display = []
+            for i, token in enumerate(tokens):
+                if hasattr(token, 'type') or hasattr(token, 'modality'):
+                    token_type = getattr(token, 'type', getattr(token, 'modality', 'unknown'))
+                    if token_type == 'speech' or token_type == ContentType.SPEECH:
+                        token_display.append(f"🔊 [SPEECH_{i}]")
+                    elif token_type == 'text' or token_type == ContentType.TEXT:
+                        content = getattr(token, 'content', f'TEXT_{i}')
+                        token_display.append(f"📝 {content}")
+                    else:
+                        token_display.append(f"❓ [UNK_{i}]")
+                else:
+                    # Fallback if token structure is different
+                    token_display.append(f"🔹 [TOKEN_{i}]")
+            
+            if token_display:
+                token_info.append("**Generated Token Sequence**:")
+                token_info.extend(token_display)
+            else:
+                token_info.append("**Token sequence not available in output**")
+        else:
+            token_info.append("**Token information not available in model output**")
+            
+        return "\n".join(token_info)
+        
+    except Exception as e:
+        return f"Error visualizing tokens: {str(e)}"
+    
+    
 def initialize_model(model_type="spirit-lm-base-7b"):
     """Initialize the Spirit LM model"""
     global spirit_lm
@@ -96,12 +145,13 @@ def generate_text_to_speech(text, temperature=0.8, top_p=0.9, max_tokens=200, sp
             
             with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as tmp_file:
                 torchaudio.save(tmp_file.name, audio_data, sample_rate)
-                return tmp_file.name, "Audio generated successfully!"
+                token_ciz = visualize_tokens(text, output)
+                return tmp_file.name, "Audio generated successfully!", token_ciz
         else:
-            return None, "No audio output generated."
+            return None, "No audio output generated.", ""
             
     except Exception as e:
-        return None, f"Error generating audio: {str(e)}"
+        return None, f"Error generating audio: {str(e)}", ""
 
 def generate_speech_to_text(audio_file, temperature=0.8, top_p=0.9, max_tokens=200):
     """Generate text from speech input"""
@@ -198,6 +248,7 @@ with gr.Blocks(title="Spirit LM Demo", theme=gr.themes.Soft()) as demo:
             with gr.Column():
                 tts_audio = gr.Audio(label="Generated Audio", type="filepath")
                 tts_status = gr.Textbox(label="Status")
+                tts_tokens = gr.Markdown(label="Token Visualization")
     
     with gr.Tab("Speech to Text"):
         with gr.Row():
@@ -224,7 +275,7 @@ with gr.Blocks(title="Spirit LM Demo", theme=gr.themes.Soft()) as demo:
     tts_button.click(
         generate_text_to_speech,
         inputs=[tts_text, tts_temp, tts_top_p, tts_tokens, speaker_id],
-        outputs=[tts_audio, tts_status]
+        outputs=[tts_audio, tts_status, tts_tokens]
     )
     
     stt_button.click(
