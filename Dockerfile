@@ -14,15 +14,7 @@ RUN apt-get update && apt-get install -y \
     git \
     wget \
     curl \
-    build-essential \
-    software-properties-common \
-    python3 \
-    python3-pip \
-    python3-dev \
-    python3-venv \
-    libsox-dev \
     libsox-fmt-all \
-    sox \
     ffmpeg \
     libsndfile1 \
     && rm -rf /var/lib/apt/lists/*
