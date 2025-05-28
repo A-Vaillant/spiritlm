@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   spiritlm:
     build: 
@@ -8,6 +6,7 @@ services:
     container_name: spiritlm-container
     ports:
       - "7860:7860"
+    runtime: "nvidia"
     volumes:
       # Mount your downloaded checkpoints directory
       # Replace "C:/spiritlm/checkpoints" with your actual path
@@ -20,6 +19,7 @@ services:
     environment:
       - NVIDIA_VISIBLE_DEVICES=all
       - CUDA_VISIBLE_DEVICES=0
+      - TORCH_USE_CUDA_DSA=1
       - NVIDIA_DRIVER_CAPABILITIES=compute,utility
       - SPIRITLM_CHECKPOINTS_DIR=/app/checkpoints
       - LOG_LEVEL=DEBUG
