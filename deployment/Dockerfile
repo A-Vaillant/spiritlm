@@ -1,5 +1,5 @@
 # Spirit LM Docker Setup for CUDA 12.6
-FROM nvidia/cuda:12.6.3-cudnn-devel-ubuntu22.04
+FROM python:3.10.17-bookworm
 
 # Prevent interactive prompts during apt installs
 ENV DEBIAN_FRONTEND=noninteractive
@@ -8,6 +8,8 @@ ENV DEBIAN_FRONTEND=noninteractive
 WORKDIR /app
 
 # Install system dependencies with Python 3.10 specifically
+# Also add the libnvidia keys and whatnot.
+# Why haven't they 
 RUN apt-get update && apt-get install -y \
     git \
     wget \
@@ -33,18 +35,18 @@ RUN ln -sf /usr/bin/python3 /usr/bin/python \
 RUN python -m pip install --upgrade pip
 
 # Install PyTorch with CUDA 12.6 support using Python 3.10
-RUN python -m pip install torch==2.4.0+cu124 torchaudio==2.4.0+cu124 --index-url https://download.pytorch.org/whl/cu124
+RUN python -m pip install torch==2.6.0+cu126 torchaudio==2.6.0+cu126 --index-url https://download.pytorch.org/whl/cu126
 
 # Clone Spirit LM repository
-RUN git clone https://github.com/A-Vaillant/spiritlm.git /app/spiritlm
+RUN git clone -b dockerization https://github.com/A-Vaillant/spiritlm.git /app/spiritlm
 
 # Install Spirit LM package using Python 3.10
 WORKDIR /app/spiritlm
 
 # Install additional Python dependencies
-RUN python -m pip install -r requirements.txt
+# RUN python -m pip install -r requirements.txt
 
-RUN python -m pip install -e .
+RUN python -m pip install --root-user-action ignore -e '.[eval]'
 
 # Create directory structure for checkpoints
 RUN mkdir -p /app/checkpoints
