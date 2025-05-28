@@ -162,11 +162,11 @@ class Spiritlm:
         self.device = _set_device_and_return()
         _logger.info(f"Loading SPIRIT-LM model from the path {path}...")
         self.model = LlamaForCausalLM.from_pretrained(
-            path, torch_dtype=torch.bfloat16
+            path, torch_dtype=torch.bfloat16, local_files_only=True
         ).to(self.device)
         _logger.info(f"SPIRIT-LM model is loaded.")
         self.tokenizer = LlamaTokenizer.from_pretrained(
-            pretrained_model_name_or_path=path,
+            pretrained_model_name_or_path=path, local_files_only=True
             add_bos_token=True,
             add_eos_token=False,
         )
